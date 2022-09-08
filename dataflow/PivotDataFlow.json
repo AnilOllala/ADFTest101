@@ -1,0 +1,82 @@
+{
+	"name": "PivotDataFlow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_WAFA_TABLE",
+						"type": "DatasetReference"
+					},
+					"name": "WafaTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText2",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "DelimitedText2",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "pivot1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ID as string,",
+				"          NAME as string,",
+				"          GENDER as string,",
+				"          Dept as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> WafaTable",
+				"WafaTable aggregate(groupBy(GENDER,",
+				"          Dept),",
+				"     TotalNoOfEmp = count(ID)) ~> aggregate1",
+				"WafaTable pivot(groupBy(Dept),",
+				"     pivotBy(GENDER),",
+				"     {} = count(ID),",
+				"     columnNaming: 'Toal_$N$V_Employees',",
+				"     lateral: true) ~> pivot1",
+				"pivot1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          DEPTNO as string,",
+				"          DNAME as string,",
+				"          LOC as string",
+				"     ),",
+				"     partitionFileNames:['PivotData.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          DEPTNO as string,",
+				"          DNAME as string,",
+				"          LOC as string",
+				"     ),",
+				"     partitionFileNames:['AggregateData.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink2"
+			]
+		}
+	}
+}

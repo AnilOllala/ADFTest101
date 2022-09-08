@@ -1,0 +1,19 @@
+{
+	"name": "FilterActivity",
+	"properties": {
+		"activities": [
+			{
+				"name": "Wait1",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2022-08-28T10:00:44Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

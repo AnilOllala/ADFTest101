@@ -1,0 +1,42 @@
+{
+	"name": "DS_UNPIVOT_TABLE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "SQL_UNPIVOT_TABLE.csv",
+				"folderPath": "source",
+				"container": "adfemo"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PO",
+				"type": "String"
+			},
+			{
+				"name": "Customer",
+				"type": "String"
+			},
+			{
+				"name": "Apples",
+				"type": "String"
+			},
+			{
+				"name": "Mangoes",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

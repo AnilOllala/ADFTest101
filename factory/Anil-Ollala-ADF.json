@@ -1,0 +1,9 @@
+{
+	"name": "Anil-Ollala-ADF",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "cd30adc4-ca1d-42d1-af00-ed3b52cb7d7d",
+		"tenantId": "7c5db65e-b636-4e53-82c6-ff9622971466"
+	}
+}

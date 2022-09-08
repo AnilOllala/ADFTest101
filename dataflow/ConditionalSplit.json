@@ -1,0 +1,81 @@
+{
+	"name": "ConditionalSplit",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_EMP_DEPT",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Target",
+						"type": "DatasetReference"
+					},
+					"name": "Dept10EmployeesSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_Target",
+						"type": "DatasetReference"
+					},
+					"name": "Dept20EmployeesSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_Target",
+						"type": "DatasetReference"
+					},
+					"name": "DeptOtherEmployeesSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPNO as string,",
+				"          ENAME as string,",
+				"          JOB as string,",
+				"          MGR as string,",
+				"          HIREDATE as string,",
+				"          SAL as string,",
+				"          COMM as string,",
+				"          DEPTNO as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 split(equals(DEPTNO, '10'),",
+				"     equals(DEPTNO, '20'),",
+				"     disjoint: false) ~> split1@(Dept10Emps, Dept20Emps, Others)",
+				"split1@Dept10Emps sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Dept10Employees.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Dept10EmployeesSink",
+				"split1@Dept20Emps sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Dept20Employees.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Dept20EmployeesSink",
+				"split1@Others sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Dept30Employees.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DeptOtherEmployeesSink"
+			]
+		}
+	}
+}

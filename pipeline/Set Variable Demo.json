@@ -1,0 +1,132 @@
+{
+	"name": "Set Variable Demo",
+	"properties": {
+		"activities": [
+			{
+				"name": "Date",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Date",
+					"value": {
+						"value": "@formatdatetime(utcnow(),'yyyy-MM-dd')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "PullYear",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Year",
+					"value": {
+						"value": "@substring(variables('Date'),0,4)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "PullDate",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Day",
+					"value": {
+						"value": "@substring(variables('Date'),8,2)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "PullMonth",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Month",
+					"value": {
+						"value": "@substring(variables('Date'),5,2)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Append variable1",
+				"type": "AppendVariable",
+				"dependsOn": [
+					{
+						"activity": "PullYear",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PullDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PullMonth",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Append",
+					"value": {
+						"value": "@variables('Date')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"Year": {
+				"type": "String"
+			},
+			"Month": {
+				"type": "String"
+			},
+			"Date": {
+				"type": "String"
+			},
+			"Day": {
+				"type": "String"
+			},
+			"Append": {
+				"type": "Array"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-24T03:56:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
