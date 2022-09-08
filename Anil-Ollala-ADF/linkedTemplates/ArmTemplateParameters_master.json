@@ -1,0 +1,39 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "Anil-Ollala-ADF"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"AzureBlobStorage2_connectionString": {
+			"value": ""
+		},
+		"LS_Destination_connectionString": {
+			"value": ""
+		},
+		"LS_EMPDEPT_connectionString": {
+			"value": ""
+		},
+		"LS_EMP_DEPT_connectionString": {
+			"value": ""
+		},
+		"LS_EMP_DEPT_SOURCE_connectionString": {
+			"value": ""
+		},
+		"LS_Sink_Data_connectionString": {
+			"value": ""
+		},
+		"LS_Source_connectionString": {
+			"value": ""
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
