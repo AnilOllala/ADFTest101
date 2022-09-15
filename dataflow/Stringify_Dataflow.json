@@ -1,5 +1,5 @@
 {
-	"name": "dataflow2",
+	"name": "Stringify_Dataflow",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -61,6 +61,9 @@
 				"     partitionFileNames:['StringifyOutput.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          {} = Contact",
+				"     ),",
 				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
