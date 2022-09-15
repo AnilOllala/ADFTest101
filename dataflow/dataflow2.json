@@ -19,7 +19,11 @@
 					"name": "source2"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "assert1"
@@ -57,7 +61,11 @@
 				"     expectExists(source1@DEPTNO == source2@DEPTNO, false, 'assertDEP', null, 'Checking Exists in DEP')) ~> assert1",
 				"assert1 derive(Assert_Col_Check = isError(),",
 				"          IncorrectDEP = hasError('assertDEP')) ~> derivedColumn1",
-				"derivedColumn1 filter(Assert_Col_Check == false()) ~> filter1"
+				"derivedColumn1 filter(Assert_Col_Check == false()) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}
