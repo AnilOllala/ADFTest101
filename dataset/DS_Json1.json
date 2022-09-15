@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "Sample_JSON_Fighters.json",
+				"fileName": "Sample_JSON_Stringify2.json",
 				"folderPath": "source",
 				"container": "adfemo"
 			}
