@@ -87,6 +87,29 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "Fail1",
+				"type": "Fail",
+				"dependsOn": [
+					{
+						"activity": "Web1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"message": {
+						"value": "@activity('Copy data1').output.error.message",
+						"type": "Expression"
+					},
+					"errorCode": {
+						"value": "@activity('Web1').output",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"variables": {

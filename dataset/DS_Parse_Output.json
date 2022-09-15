@@ -1,8 +1,8 @@
 {
-	"name": "DS_Source_input",
+	"name": "DS_Parse_Output",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "LS_Source",
+			"referenceName": "AzureBlobStorage2",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,25 +10,35 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "EMP2.csv",
-				"folderPath": "input/SQL_Tables",
-				"container": "source"
+				"folderPath": "Parse",
+				"container": "adfemo"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
+			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
 		"schema": [
 			{
+				"name": "EMPNO",
 				"type": "String"
 			},
 			{
+				"name": "ENAME",
 				"type": "String"
 			},
 			{
+				"name": "JOB",
+				"type": "String"
+			},
+			{
+				"name": "Skills",
+				"type": "String"
+			},
+			{
+				"name": "Address",
 				"type": "String"
 			}
 		]
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }

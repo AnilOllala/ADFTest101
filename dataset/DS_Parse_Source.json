@@ -1,5 +1,5 @@
 {
-	"name": "DS_Source_input",
+	"name": "DS_Parse_Source",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_Source",
@@ -10,25 +10,36 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "EMP2.csv",
-				"folderPath": "input/SQL_Tables",
-				"container": "source"
+				"fileName": "ParseJSON.csv",
+				"folderPath": "Parse",
+				"container": "adfemo"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
+			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
 		"schema": [
 			{
+				"name": "EMPNO",
 				"type": "String"
 			},
 			{
+				"name": "ENAME",
 				"type": "String"
 			},
 			{
+				"name": "JOB",
+				"type": "String"
+			},
+			{
+				"name": "Skills",
+				"type": "String"
+			},
+			{
+				"name": "Address",
 				"type": "String"
 			}
 		]
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }
