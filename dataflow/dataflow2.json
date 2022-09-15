@@ -27,6 +27,9 @@
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -42,7 +45,13 @@
 				"source1 stringify(ContactStringify = Contact ? string,",
 				"     format: 'json') ~> stringify1",
 				"stringify1 derive(ContactStringify = toString(ContactStringify)) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"derivedColumn1 select(mapColumn(",
+				"          name,",
+				"          ContactStringify",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          DEPTNO as string,",
