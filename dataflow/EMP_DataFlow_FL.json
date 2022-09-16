@@ -1,5 +1,5 @@
 {
-	"name": "dataflow2",
+	"name": "EMP_DataFlow_FL",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
