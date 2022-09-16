@@ -1,0 +1,14 @@
+{
+	"name": "StringFunctions",
+	"properties": {
+		"type": "UDFLibrary",
+		"typeProperties": {
+			"sources": [],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"COMMDEPT(string) as integer = iif(i1=='10', 500, iif(i1=='20', 1000, 400))"
+			]
+		}
+	}
+}
