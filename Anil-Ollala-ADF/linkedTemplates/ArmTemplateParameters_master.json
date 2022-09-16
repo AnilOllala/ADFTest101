@@ -23,11 +23,20 @@
 		"LS_EMP_DEPT_SOURCE_connectionString": {
 			"value": ""
 		},
+		"LS_Flowlet_accountKey": {
+			"value": ""
+		},
 		"LS_Sink_Data_connectionString": {
+			"value": ""
+		},
+		"LS_Snowflake_connectionString": {
 			"value": ""
 		},
 		"LS_Source_connectionString": {
 			"value": ""
+		},
+		"LS_Flowlet_properties_typeProperties_url": {
+			"value": "https://anilstorage004.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"value": ""

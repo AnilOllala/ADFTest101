@@ -31,13 +31,25 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_EMP_DEPT_SOURCE'"
 		},
+		"LS_Flowlet_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_Flowlet'"
+		},
 		"LS_Sink_Data_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_Sink_Data'"
 		},
+		"LS_Snowflake_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_Snowflake'"
+		},
 		"LS_Source_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_Source'"
+		},
+		"LS_Flowlet_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://anilstorage004.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -84,11 +96,20 @@
 					"LS_EMP_DEPT_SOURCE_connectionString": {
 						"value": "[parameters('LS_EMP_DEPT_SOURCE_connectionString')]"
 					},
+					"LS_Flowlet_accountKey": {
+						"value": "[parameters('LS_Flowlet_accountKey')]"
+					},
 					"LS_Sink_Data_connectionString": {
 						"value": "[parameters('LS_Sink_Data_connectionString')]"
 					},
+					"LS_Snowflake_connectionString": {
+						"value": "[parameters('LS_Snowflake_connectionString')]"
+					},
 					"LS_Source_connectionString": {
 						"value": "[parameters('LS_Source_connectionString')]"
+					},
+					"LS_Flowlet_properties_typeProperties_url": {
+						"value": "[parameters('LS_Flowlet_properties_typeProperties_url')]"
 					}
 				}
 			},
@@ -152,6 +173,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'Anil-Ollala-ADF_ArmTemplate_2')]"
+			]
+		},
+		{
+			"name": "Anil-Ollala-ADF_ArmTemplate_4",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_4.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'Anil-Ollala-ADF_ArmTemplate_3')]"
 			]
 		}
 	]

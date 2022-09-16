@@ -31,13 +31,25 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_EMP_DEPT_SOURCE'"
 		},
+		"LS_Flowlet_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_Flowlet'"
+		},
 		"LS_Sink_Data_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_Sink_Data'"
 		},
+		"LS_Snowflake_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_Snowflake'"
+		},
 		"LS_Source_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_Source'"
+		},
+		"LS_Flowlet_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://anilstorage004.dfs.core.windows.net/"
 		}
 	},
 	"variables": {
@@ -334,6 +346,23 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LS_Flowlet')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LS_Flowlet_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('LS_Flowlet_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LS_Sink_Data')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -342,6 +371,19 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('LS_Sink_Data_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_Snowflake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_Snowflake_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -358,6 +400,125 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Flowlet_FL1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Flowlet",
+				"typeProperties": {
+					"sources": [],
+					"sinks": [],
+					"transformations": [
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "surrogateKey1"
+						},
+						{
+							"name": "EMP"
+						},
+						{
+							"name": "output1"
+						}
+					],
+					"scriptLines": [
+						"input(output(",
+						"          ID as string,",
+						"          NAME as string,",
+						"          GENDER as string,",
+						"          Dept as string,",
+						"          DepName as string",
+						"     ),",
+						"     order: 0) ~> EMP",
+						"EMP aggregate(groupBy(ID,",
+						"          NAME,",
+						"          GENDER,",
+						"          Dept,",
+						"          DepName),",
+						"     CountColumn = count()) ~> aggregate1",
+						"aggregate1 select(mapColumn(",
+						"          ID,",
+						"          Dept,",
+						"          NAME,",
+						"          GENDER,",
+						"          DepName",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 keyGenerate(output(UniqueId as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L) ~> surrogateKey1",
+						"surrogateKey1 output() ~> output1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/StringFunctions')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "UDFLibrary",
+				"typeProperties": {
+					"sources": [],
+					"sinks": [],
+					"transformations": [],
+					"scriptLines": [
+						"COMMDEPT(string) as integer = iif(i1=='10',500,iif(i1=='20',1000,400)),",
+						"CommissionNULL(string) as integer = iif(i1=='NULL',500,iif(toInteger(i1)>1000,1500,400))"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline6')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "LS_Snowflake",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "insert into T1 values(2);\ninsert into T2 values(3);"
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Snowflake')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DS_DEPT_ONLY')]",
@@ -463,286 +624,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_Source')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_EMP_DEPT')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_EMPDEPT",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "SQL_EMP_Table.csv",
-						"container": "empdept"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "EMPNO",
-						"type": "String"
-					},
-					{
-						"name": "ENAME",
-						"type": "String"
-					},
-					{
-						"name": "JOB",
-						"type": "String"
-					},
-					{
-						"name": "MGR",
-						"type": "String"
-					},
-					{
-						"name": "HIREDATE",
-						"type": "String"
-					},
-					{
-						"name": "SAL",
-						"type": "String"
-					},
-					{
-						"name": "COMM",
-						"type": "String"
-					},
-					{
-						"name": "DEPTNO",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_EMPDEPT')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_EMP_DEPT_SOURCE')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_EMP_DEPT_SOURCE",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "SQL_EMP_Table_With_Other_dept.csv",
-						"folderPath": "source",
-						"container": "adfemo"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "EMPNO",
-						"type": "String"
-					},
-					{
-						"name": "ENAME",
-						"type": "String"
-					},
-					{
-						"name": "JOB",
-						"type": "String"
-					},
-					{
-						"name": "MGR",
-						"type": "String"
-					},
-					{
-						"name": "HIREDATE",
-						"type": "String"
-					},
-					{
-						"name": "SAL",
-						"type": "String"
-					},
-					{
-						"name": "COMM",
-						"type": "String"
-					},
-					{
-						"name": "DEPTNO",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_EMP_DEPT_SOURCE')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_For_Each')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_Destination",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FolderName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": {
-							"value": "@dataset().FolderName",
-							"type": "Expression"
-						},
-						"container": "target"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_Destination')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Json1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_Source",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "Sample_JSON_Fighters.json",
-						"folderPath": "source",
-						"container": "adfemo"
-					}
-				},
-				"schema": {
-					"type": "object",
-					"properties": {
-						"id": {
-							"type": "string"
-						},
-						"name": {
-							"type": "string"
-						},
-						"Skills": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"Address": {
-							"type": "object",
-							"properties": {
-								"State": {
-									"type": "string"
-								},
-								"Country": {
-									"type": "string"
-								},
-								"PinCode": {
-									"type": "string"
-								}
-							}
-						},
-						"Contact": {
-							"type": "object",
-							"properties": {
-								"phone ": {
-									"type": "string"
-								},
-								"Email": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_Source')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Output_Location')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_Destination",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FolderName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "*.*",
-						"folderPath": {
-							"value": "@dataset().FolderName",
-							"type": "Expression"
-						},
-						"container": "source"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_Destination')]"
 			]
 		}
 	]
