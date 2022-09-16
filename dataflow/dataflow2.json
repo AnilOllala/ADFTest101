@@ -21,6 +21,10 @@
 			],
 			"sinks": [
 				{
+					"dataset": {
+						"referenceName": "DelimitedText2",
+						"type": "DatasetReference"
+					},
 					"name": "sink1"
 				}
 			],
@@ -64,8 +68,15 @@
 				"derivedColumn1 filter(Assert_Col_Check == false()) ~> filter1",
 				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          DEPTNO as string,",
+				"          DNAME as string,",
+				"          LOC as string",
+				"     ),",
+				"     partitionFileNames:['FlowletEmp.csv'],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
