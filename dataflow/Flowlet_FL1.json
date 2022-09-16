@@ -1,0 +1,53 @@
+{
+	"name": "Flowlet_FL1",
+	"properties": {
+		"type": "Flowlet",
+		"typeProperties": {
+			"sources": [],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "EMP"
+				},
+				{
+					"name": "output1"
+				}
+			],
+			"scriptLines": [
+				"input(output(",
+				"          ID as string,",
+				"          NAME as string,",
+				"          GENDER as string,",
+				"          Dept as string",
+				"     ),",
+				"     order: 0) ~> EMP",
+				"EMP aggregate(groupBy(ID,",
+				"          NAME,",
+				"          GENDER,",
+				"          Dept),",
+				"     CountColumn = count()) ~> aggregate1",
+				"aggregate1 select(mapColumn(",
+				"          ID,",
+				"          Dept,",
+				"          NAME,",
+				"          GENDER",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 keyGenerate(output(UniqueId as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 output() ~> output1"
+			]
+		}
+	}
+}
