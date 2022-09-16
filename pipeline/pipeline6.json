@@ -22,7 +22,7 @@
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "select * from emp;\nselect * from dept;"
+							"text": "insert into T1 values(2);\ninsert into T2 values(3);"
 						}
 					]
 				}

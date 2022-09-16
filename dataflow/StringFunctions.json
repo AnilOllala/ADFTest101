@@ -7,7 +7,8 @@
 			"sinks": [],
 			"transformations": [],
 			"scriptLines": [
-				"COMMDEPT(string) as integer = iif(i1=='10', 500, iif(i1=='20', 1000, 400))"
+				"COMMDEPT(string) as integer = iif(i1=='10', 500, iif(i1=='20', 1000, 400)),",
+				"CommissionNULL(string) as integer = iif(i1=='NULL', 500, iif(toInteger(i1)>1000, 1500, 400))"
 			]
 		}
 	}
