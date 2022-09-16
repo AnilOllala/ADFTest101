@@ -1,0 +1,33 @@
+{
+	"name": "DS_Flowlet_DEPT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Flowlet",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Flowlet_DEPT.csv",
+				"folderPath": "source",
+				"fileSystem": "adfemo"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Dept",
+				"type": "String"
+			},
+			{
+				"name": "DepName",
+				"type": "String"
+			}
+		]
+	}
+}
